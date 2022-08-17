@@ -1,0 +1,22 @@
+
+d-dropdown{
+    display: block;
+    position: relative;
+    isolation: isolate;
+} 
+d-dropdown-content{    
+    display: block;
+    position: absolute;
+    z-index: 1000;
+}
+d-dropdown.left d-dropdown-content{
+    left: 0;
+}
+
+d-dropdown.right d-dropdown-content{
+    right: 0;
+}
+
+d-dropdown:not([active]) d-dropdown-content {
+    display: none;
+}
