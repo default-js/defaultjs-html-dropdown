@@ -17,6 +17,9 @@ BODY.on("click", closeActiveDropdown);
 const NODENAME = toNodeName("dropdown");
 const DROPDOWN_CONTENT_SELECTOR = `${DropdownContentElement.NODENAME}, .dropdown-content`;
 
+const MODE_CLICK = "click";
+
+const ATTRIBUTE_MODE="mode"
 const ATTRIBUTE_ACTIVE = "active";
 export default class DropdownElement extends Component {
 	static get NODENAME() {
@@ -35,7 +38,8 @@ export default class DropdownElement extends Component {
 
 		if (!this.#initialied) {
 			let mouseleaveTimeout = null;
-			const eventType = TOUCH_ONLY ? "click" : "mouseover";
+			const clickMode = this.attr(ATTRIBUTE_MODE) == MODE_CLICK || TOUCH_ONLY
+			const eventType =  clickMode ? "click" : "mouseover";
 			this.on(eventType, (event) => {
 				const target = event.target;
 				const onContent = target.is(DROPDOWN_CONTENT_SELECTOR) || target.parent(DROPDOWN_CONTENT_SELECTOR);

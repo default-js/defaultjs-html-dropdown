@@ -47,4 +47,5 @@ Include all files and folder of `dist/*` into your project and include `browser-
 
 Attribute | Description
 ----------|------------
- active   | `boolean` -> true: open dropdown menu, false: close dropdown menu
+mode      | `click` or `auto` -> if value `click`, it forces the dropdown menu to open on click event
+active    | `boolean` -> true: open dropdown menu, false: close dropdown menu
