@@ -42,7 +42,7 @@ module.exports = (env, argv) => {
                 ]),
 				new CopyPlugin({
 					patterns: [
-						{ from: "./src/css", to: `css` }
+						{ from: "./src/css", to: `css`, noErrorOnMissing: true }
 					]
 				})
             ]
