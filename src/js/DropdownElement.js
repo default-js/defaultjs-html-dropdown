@@ -1,15 +1,27 @@
 import { Component, define } from "@default-js/defaultjs-html-components";
-import {toNodeName} from "@default-js/defaultjs-html-components/src/utils/DefineComponentHelper";
+import { toNodeName } from "@default-js/defaultjs-html-components/src/utils/DefineComponentHelper";
 import DropdownContentElement from "./DropdownContentElement";
 
 const BODY = document.body;
 const TOUCH_ONLY = window.matchMedia("(any-hover: none)").matches;
 
+/**
+ * @type {DropdownElement | HTMLElement}
+ */
 let OPEN_DROPDOWN = null;
-const closeActiveDropdown = () => {
+/**
+ * @function closeActiveDropdown
+ * @param {MouseEvent} event
+ */
+const closeActiveDropdown = (event) => {
 	if (OPEN_DROPDOWN) {
-		OPEN_DROPDOWN.active = false;
-		OPEN_DROPDOWN = null;
+		const rect = OPEN_DROPDOWN.getDropdownContent().getBoundingClientRect();		
+		const isOnDropdown = event && rect.top <= event.clientX && event.clientX <= rect.bottom 
+			&& rect.left <= event.clientY &&  event.clientY <= rect.right;
+		if(!isOnDropdown){
+			OPEN_DROPDOWN.active = false;
+			OPEN_DROPDOWN = null;
+		}
 	}
 };
 BODY.on("click", closeActiveDropdown);
@@ -17,9 +29,10 @@ BODY.on("click", closeActiveDropdown);
 const NODENAME = toNodeName("dropdown");
 const DROPDOWN_CONTENT_SELECTOR = `${DropdownContentElement.NODENAME}, .dropdown-content`;
 
+const EVENT__CLOSE = `${NODENAME}--close`;
 const MODE_CLICK = "click";
 
-const ATTRIBUTE_MODE="mode"
+const ATTRIBUTE_MODE = "mode";
 const ATTRIBUTE_ACTIVE = "active";
 export default class DropdownElement extends Component {
 	static get NODENAME() {
@@ -31,6 +44,12 @@ export default class DropdownElement extends Component {
 
 	constructor() {
 		super();
+		this.root.on(EVENT__CLOSE, (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+			if(this.active)
+				closeActiveDropdown();
+		});
 	}
 
 	async init() {
@@ -38,8 +57,8 @@ export default class DropdownElement extends Component {
 
 		if (!this.#initialied) {
 			let mouseleaveTimeout = null;
-			const clickMode = this.attr(ATTRIBUTE_MODE) == MODE_CLICK || TOUCH_ONLY
-			const eventType =  clickMode ? "click" : "mouseover";
+			const clickMode = this.attr(ATTRIBUTE_MODE) == MODE_CLICK || TOUCH_ONLY;
+			const eventType = clickMode ? "click" : "mouseover";
 			this.on(eventType, (event) => {
 				const target = event.target;
 				const onContent = target.is(DROPDOWN_CONTENT_SELECTOR) || target.parent(DROPDOWN_CONTENT_SELECTOR);
@@ -66,6 +85,12 @@ export default class DropdownElement extends Component {
 				});
 			}
 		}
+	}
+	/** 
+	 * @returns {HTMLElement}
+	 */
+	getDropdownContent() {
+		return this.root.find(DROPDOWN_CONTENT_SELECTOR).first();
 	}
 
 	get active() {

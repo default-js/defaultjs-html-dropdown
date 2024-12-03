@@ -1,7 +1,7 @@
 {
 	"name": "@default-js/defaultjs-html-dropdown",
 	"buildname": "defaultjs-html-dropdown",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "Html web component for dropdown functionality!",
 	"main": "./index.js",
 	"scripts": {
