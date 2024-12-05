@@ -5,6 +5,13 @@ import DropdownContentElement from "./DropdownContentElement";
 const BODY = document.body;
 const TOUCH_ONLY = window.matchMedia("(any-hover: none)").matches;
 
+const isOnContent = (event, dropdown) => {
+	if (!event) return false;
+	const { top, bottom, left, right } = dropdown.getDropdownContent().getBoundingClientRect();
+	const { x, y } = event;
+	return top <= y && y <= bottom && left <= x && x <= right;
+};
+
 /**
  * @type {DropdownElement | HTMLElement}
  */
@@ -14,11 +21,8 @@ let OPEN_DROPDOWN = null;
  * @param {MouseEvent} event
  */
 const closeActiveDropdown = (event) => {
-	if (OPEN_DROPDOWN) {
-		const rect = OPEN_DROPDOWN.getDropdownContent().getBoundingClientRect();		
-		const isOnDropdown = event && rect.top <= event.clientX && event.clientX <= rect.bottom 
-			&& rect.left <= event.clientY &&  event.clientY <= rect.right;
-		if(!isOnDropdown){
+	if (OPEN_DROPDOWN) {		
+		if (!(isOnContent(event, OPEN_DROPDOWN))) {
 			OPEN_DROPDOWN.active = false;
 			OPEN_DROPDOWN = null;
 		}
@@ -47,8 +51,7 @@ export default class DropdownElement extends Component {
 		this.root.on(EVENT__CLOSE, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-			if(this.active)
-				closeActiveDropdown();
+			if (this.active) closeActiveDropdown();
 		});
 	}
 
@@ -86,7 +89,7 @@ export default class DropdownElement extends Component {
 			}
 		}
 	}
-	/** 
+	/**
 	 * @returns {HTMLElement}
 	 */
 	getDropdownContent() {
